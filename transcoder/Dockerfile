@@ -1,7 +1,9 @@
-FROM alpine:latest
+FROM python:3.9-slim
 
-RUN apk add --no-cache bash ffmpeg lame curl
+WORKDIR /app
 
-COPY transcode.sh .
+COPY transcode.py requirements.txt .
+RUN python3 -mpip install -r requirements.txt && \
+    apt-get update && apt-get install -y ffmpeg lame
 
-CMD ["./transcode.sh"]
+ENTRYPOINT ["/app/transcode.py"]
