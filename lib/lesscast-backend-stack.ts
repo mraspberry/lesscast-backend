@@ -26,6 +26,17 @@ export class LesscastBackendStack extends cdk.Stack {
       this,
       "transcoder_service",
       {
+        minScalingCapacity: 0,
+        capacityProviderStrategies: [
+          {
+            capacityProvider: "FARGATE_SPOT",
+            weight: 4,
+          },
+          {
+            capacityProvider: "FARGATE",
+            weight: 1,
+          },
+        ],
         image: containerImage,
         scalingSteps: [
           { change: -1, upper: 0 },
@@ -36,7 +47,7 @@ export class LesscastBackendStack extends cdk.Stack {
         memoryLimitMiB: 2048,
       }
     );
-    
+
     // Permission grants
     mediaBucket.addObjectCreatedNotification(new s3n.SqsDestination(queue), {
       prefix: "video/",
