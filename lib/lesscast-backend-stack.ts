@@ -20,7 +20,7 @@ export class LesscastBackendStack extends cdk.Stack {
     });
 
     const containerImage: ecs.ContainerImage = ecs.ContainerImage.fromRegistry(
-      "ghcr.io/mraspberry/lesscast-transcoder:0.6"
+      "ghcr.io/mraspberry/lesscast-transcoder:0.9"
     );
     const ecsService = new ecsPatterns.QueueProcessingFargateService(
       this,
@@ -44,7 +44,7 @@ export class LesscastBackendStack extends cdk.Stack {
         ],
         queue: queue,
         cpu: 512,
-        memoryLimitMiB: 2048,
+        memoryLimitMiB: 1024,
       }
     );
 
