@@ -1,4 +1,5 @@
 import * as cdk from "@aws-cdk/core";
+import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
 import * as s3 from "@aws-cdk/aws-s3";
@@ -20,12 +21,14 @@ export class LesscastBackendStack extends cdk.Stack {
     });
 
     const containerImage: ecs.ContainerImage = ecs.ContainerImage.fromRegistry(
-      "ghcr.io/mraspberry/lesscast-transcoder:0.9"
+      "ghcr.io/mraspberry/lesscast-transcoder:0.6"
     );
+    const vpc: ec2.Vpc = new ec2.Vpc(this, 'lcvpc', {natGateways: 1});
     const ecsService = new ecsPatterns.QueueProcessingFargateService(
       this,
       "transcoder_service",
       {
+        vpc: vpc,
         minScalingCapacity: 0,
         capacityProviderStrategies: [
           {
@@ -44,7 +47,7 @@ export class LesscastBackendStack extends cdk.Stack {
         ],
         queue: queue,
         cpu: 512,
-        memoryLimitMiB: 1024,
+        memoryLimitMiB: 2048,
       }
     );
 
