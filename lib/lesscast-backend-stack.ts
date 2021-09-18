@@ -24,14 +24,14 @@ export class LesscastBackendStack extends cdk.Stack {
     });
 
     const containerImage: ecs.ContainerImage = ecs.ContainerImage.fromRegistry(
-      "ghcr.io/mraspberry/lesscast-transcoder:0.6"
+      "ghcr.io/mraspberry/lesscast-transcoder:0.9"
     );
     const vpc: ec2.Vpc = new ec2.Vpc(this, 'lcvpc', {natGateways: 1});
     const ecsService = new ecsPatterns.QueueProcessingFargateService(
       this,
       "transcoder_service",
       {
-        vpc: vpc,
+        vpc: vpc, 
         minScalingCapacity: 0,
         capacityProviderStrategies: [
           {
