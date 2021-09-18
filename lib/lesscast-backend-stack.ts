@@ -1,10 +1,13 @@
+import * as apigateway from '@aws-cdk/aws-apigateway';
 import * as cdk from "@aws-cdk/core";
 import * as ec2 from '@aws-cdk/aws-ec2';
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
+import * as lambda from '@aws-cdk/aws-lambda';
 import * as s3 from "@aws-cdk/aws-s3";
 import * as s3n from "@aws-cdk/aws-s3-notifications";
 import * as sqs from "@aws-cdk/aws-sqs";
+import * as path from 'path';
 
 export class LesscastBackendStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -50,11 +53,25 @@ export class LesscastBackendStack extends cdk.Stack {
         memoryLimitMiB: 2048,
       }
     );
+    const api: apigateway.RestApi = new apigateway.RestApi(this, 'backend-api',{
+      description: 'API to interact with media'
+    });
+    new cdk.CfnOutput(this, 'api-url', {value: api.url});
+
+    const listHandler: lambda.Function = new lambda.Function(this, 'list-api-handler',{
+      handler: 'handler.handle',
+      code: lambda.Code.fromAsset(path.join(__dirname, '../list-api')),
+      runtime: lambda.Runtime.PYTHON_3_9,
+      environment: {"MEDIA_BUCKET": mediaBucket.bucketName}
+    });
+    const listMedia: apigateway.Resource = api.root.addResource('list-media');
+    listMedia.addMethod('GEt', new apigateway.LambdaIntegration(listHandler));
 
     // Permission grants
     mediaBucket.addObjectCreatedNotification(new s3n.SqsDestination(queue), {
       prefix: "video/",
     });
     mediaBucket.grantReadWrite(ecsService.taskDefinition.taskRole);
+    mediaBucket.grantRead(listHandler);
   }
 }
