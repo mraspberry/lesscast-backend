@@ -21,7 +21,7 @@ def handle(*unused):
     print("In handler")
     try:
         return {"statusCode": 200, "body": json.dumps(_handle())}
-    except:
+    except BaseException as err:
         traceback.print_exc()
         return {"statusCode": 500, "body": json.dumps({"errorMessage": str(err)})}
 
