@@ -1,16 +1,10 @@
 import * as apigateway from "@aws-cdk/aws-apigateway";
 import * as cdk from "@aws-cdk/core";
-<<<<<<< HEAD
-import * as ec2 from "@aws-cdk/aws-ec2";
-import * as ecs from "@aws-cdk/aws-ecs";
-import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
-=======
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as ec2 from "@aws-cdk/aws-ec2";
 import * as ecs from "@aws-cdk/aws-ecs";
 import * as ecsPatterns from "@aws-cdk/aws-ecs-patterns";
 import * as iam from "@aws-cdk/aws-iam";
->>>>>>> f2f8d5d (Updated to use cloudfront for file distribution)
 import * as lambda from "@aws-cdk/aws-lambda";
 import * as s3 from "@aws-cdk/aws-s3";
 import * as s3n from "@aws-cdk/aws-s3-notifications";
