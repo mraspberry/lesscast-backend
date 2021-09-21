@@ -10,9 +10,15 @@ import boto3
 def _handle():
     client = boto3.client("s3")
     objects = client.list_objects(Bucket=os.getenv("MEDIA_BUCKET"), Prefix="audio/")
-    results = {"Bucket": os.getenv("MEDIA_BUCKET"), "Objects": list()}
+    results = list()
     for s3obj in objects.get("Contents", list()):  # might be empty
-        results["Objects"].append({"Key": s3obj["Key"], "Size": s3obj["Size"]})
+        results.append(
+            {
+                "URL": f"http://{os.getenv('DIST_DOMAIN_NAME')}/{s3obj['Key']}",
+                "Filename": os.path.basename(s3obj["Key"]),
+                "Size": s3obj["Size"],
+            }
+        )
     print(json.dumps(results, indent=2))
     return results
 
